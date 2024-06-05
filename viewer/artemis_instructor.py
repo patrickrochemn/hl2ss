@@ -14,6 +14,7 @@ import cv2
 import hl2ss_imshow
 import hl2ss
 import hl2ss_lnm
+import hl2ss_rus
 
 # Settings --------------------------------------------------------------------
 
@@ -42,12 +43,7 @@ divisor = 1
 profile = hl2ss.VideoProfile.H265_MAIN
 
 # Decoded format
-# Options include:
-# 'bgr24'
-# 'rgb24'
-# 'bgra'
-# 'rgba'
-# 'gray8'
+# Options include: 'bgr24','rgb24','bgra','rgba','gray8'
 decoded_format = 'bgr24'
 
 #------------------------------------------------------------------------------
@@ -56,17 +52,6 @@ hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=e
 
 if (mode == hl2ss.StreamMode.MODE_2):
     data = hl2ss_lnm.download_calibration_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, width, height, framerate)
-    print('Calibration')
-    print(f'Focal length: {data.focal_length}')
-    print(f'Principal point: {data.principal_point}')
-    print(f'Radial distortion: {data.radial_distortion}')
-    print(f'Tangential distortion: {data.tangential_distortion}')
-    print('Projection')
-    print(data.projection)
-    print('Intrinsics')
-    print(data.intrinsics)
-    print('RigNode Extrinsics')
-    print(data.extrinsics)
 else:
     enable = True
 
@@ -83,11 +68,6 @@ else:
 
     while (enable):
         data = client.get_next_packet()
-
-        print(f'Pose at time {data.timestamp}')
-        print(data.pose)
-        print(f'Focal length: {data.payload.focal_length}')
-        print(f'Principal point: {data.payload.principal_point}')
 
         cv2.imshow('Video', data.payload.image)
         cv2.waitKey(1)
