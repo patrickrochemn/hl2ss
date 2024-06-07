@@ -1,16 +1,5 @@
-#------------------------------------------------------------------------------
-# This script receives video from the HoloLens front RGB camera as well as
-# holograms and plays it. It also can display and manipulate a 3D cube.
-# The camera supports various resolutions and framerates. See
-# https://github.com/jdibenes/hl2ss/blob/main/etc/pv_configurations.txt
-# for a list of supported formats. The default configuration is 1080p 30 FPS. 
-# The stream supports three operating modes: 0) video, 1) video + camera pose, 
-# 2) query calibration (single transfer).
-# Press esc to stop.
-#------------------------------------------------------------------------------
-
+import threading
 from pynput import keyboard
-
 import cv2
 import hl2ss_imshow
 import hl2ss
@@ -109,61 +98,84 @@ def on_press(key):
             enable = False
     return enable
 
-listener = keyboard.Listener(on_press=on_press)
-listener.start()
+# Thread function for hologram manipulation
+def hologram_thread():
+    global enable
+    ipc = hl2ss_lnm.ipc_umq(host, hl2ss.IPCPort.UNITY_MESSAGE_QUEUE)
+    ipc.open()
 
-ipc = hl2ss_lnm.ipc_umq(host, hl2ss.IPCPort.UNITY_MESSAGE_QUEUE)
-ipc.open()
+    key = 0
 
-key = 0
+    display_list = hl2ss_rus.command_buffer()
+    display_list.begin_display_list()  # Begin command sequence
+    display_list.remove_all()  # Remove all objects that were created remotely
+    display_list.create_primitive(hl2ss_rus.PrimitiveType.Cube)  # Create a cube, server will return its id
+    display_list.set_target_mode(hl2ss_rus.TargetMode.UseLast)  # Set server to use the last created object as target, this avoids waiting for the id of the cube
+    display_list.set_world_transform(key, position, rotation, scale)  # Set the world transform of the cube
+    display_list.set_color(key, rgba)  # Set the color of the cube
+    display_list.set_active(key, hl2ss_rus.ActiveState.Active)  # Make the cube visible
+    display_list.set_target_mode(hl2ss_rus.TargetMode.UseID)  # Restore target mode
+    display_list.end_display_list()  # End command sequence
+    ipc.push(display_list)  # Send commands to server
+    results = ipc.pull(display_list)  # Get results from server
+    key = results[2]  # Get the cube id, created by the 3rd command in the list
 
-display_list = hl2ss_rus.command_buffer()
-display_list.begin_display_list() # Begin command sequence
-display_list.remove_all() # Remove all objects that were created remotely
-display_list.create_primitive(hl2ss_rus.PrimitiveType.Cube) # Create a cube, server will return its id
-display_list.set_target_mode(hl2ss_rus.TargetMode.UseLast) # Set server to use the last created object as target, this avoids waiting for the id of the cube
-display_list.set_world_transform(key, position, rotation, scale) # Set the world transform of the cube
-display_list.set_color(key, rgba) # Set the color of the cube
-display_list.set_active(key, hl2ss_rus.ActiveState.Active) # Make the cube visible
-display_list.set_target_mode(hl2ss_rus.TargetMode.UseID) # Restore target mode
-display_list.end_display_list() # End command sequence
-ipc.push(display_list) # Send commands to server
-results = ipc.pull(display_list) # Get results from server
-key = results[2] # Get the cube id, created by the 3rd command in the list
+    print(f'Created cube with id {key}')
 
-print(f'Created cube with id {key}')
-
-hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=enable_mrc)
-
-if (mode == hl2ss.StreamMode.MODE_2):
-    data = hl2ss_lnm.download_calibration_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, width, height, framerate)
-else:
-    client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=mode, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
-    client.open()
-
-    while (enable):
+    while enable:
         display_list = hl2ss_rus.command_buffer()
         display_list.begin_display_list()
         display_list.set_world_transform(key, position, rotation, scale)
         display_list.end_display_list()
         ipc.push(display_list)
         results = ipc.pull(display_list)
-
-        data = client.get_next_packet()
-
-        cv2.imshow('Video', data.payload.image)
-        if cv2.waitKey(1) & 0xFF == 27:
-            break
-
+    
     # Clean up
-    client.close()
     command_buffer = hl2ss_rus.command_buffer()
-    command_buffer.remove(key) # Destroy cube
+    command_buffer.remove(key)
     ipc.push(command_buffer)
-    results = ipc.pull(command_buffer)
+    resultes = ipc.pull(command_buffer)
 
-ipc.close()
+    ipc.close()
 
-listener.join()
+# Thread function for video streaming
+def video_stream_thread():
+    global enable
+    hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=enable_mrc)
 
-hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
+    if mode == hl2ss.StreamMode.MODE_2:
+        data = hl2ss_lnm.download_calibration_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, width, height, framerate)
+    else:
+        client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=mode, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
+        client.open()
+
+        while enable:
+            try:
+                data = client.get_next_packet()
+                cv2.imshow('Video', data.payload.image)
+                if cv2.waitKey(1) & 0xFF == 27:
+                    break
+            except Exception as e:
+                print(f"Error: {e}")
+                break
+
+        client.close()
+
+    hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
+
+# Main execution
+if __name__ == "__main__":
+    listener = keyboard.Listener(on_press=on_press)
+    listener.start()
+
+    hologram_thread = threading.Thread(target=hologram_thread)
+    video_stream_thread = threading.Thread(target=video_stream_thread)
+
+    hologram_thread.start()
+    video_stream_thread.start()
+
+    hologram_thread.join()
+    video_stream_thread.join()
+
+    listener.join()
+    cv2.destroyAllWindows()
