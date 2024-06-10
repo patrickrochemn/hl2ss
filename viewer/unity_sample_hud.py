@@ -10,23 +10,22 @@ import hl2ss
 import hl2ss_lnm
 import hl2ss_rus
 
-
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
 host = '192.168.2.39'
 
 # Position in camera space (x, y, z)
-position = [0,0, 0.5]
+position = [0, 0, 2]
 
 # Rotation in camera space (x, y, z, w) as a quaternion
 rotation = [0, 0, 0, 1]
 
 # Scale (x, y, z) in meters
-scale = [0.05, 0.05, 1]
+scale = [1, 1, 1]
 
 # Texture file (must be jpg or png)
-texture_file = 'texture.jpg'
+texture_file = r'viewer\ArtemisIcon.jpg'
 
 #------------------------------------------------------------------------------
 
@@ -41,8 +40,14 @@ def on_press(key):
 listener = keyboard.Listener(on_press=on_press)
 listener.start()
 
-with open(texture_file, mode='rb') as file:
-    texture = file.read()
+try:
+    with open(texture_file, mode='rb') as file:
+        texture = file.read()
+    print("Texture file loaded successfully")
+except Exception as e:
+    print(f"Failed to load texture file: {e}")
+    listener.stop()
+    exit()
 
 ipc = hl2ss_lnm.ipc_umq(host, hl2ss.IPCPort.UNITY_MESSAGE_QUEUE)
 ipc.open()
@@ -62,6 +67,8 @@ display_list.end_display_list() # End command sequence
 ipc.push(display_list) # Send commands to server
 results = ipc.pull(display_list) # Get results from server
 key = results[2] # Get the quad id, created by the 3rd command in the list
+print(f"Created quad with id {key}")
+print("Should be visible in Unity")
 
 stop_event.wait()
 

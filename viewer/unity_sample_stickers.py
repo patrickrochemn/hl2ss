@@ -21,16 +21,16 @@ import hl2ss_rus
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '192.168.1.7'
+host = '192.168.2.39'
 
 # Calibration folder (must exist but can be empty)
-calibration_path = '../calibration'
+calibration_path = 'calibration'
 
 # Quad scale in meters
 scale = [0.2, 0.2, 1]
 
 # Texture file (must be jpg or png)
-texture_file = 'texture.jpg'
+texture_file = 'viewer\ArtemisIcon.jpg'
 
 # Scaling factor for visibility
 brightness = 8

@@ -16,7 +16,7 @@ import hl2ss_rus
 host = '192.168.2.39'
 
 # Position in world space (x, y, z) in meters
-position = [0, 0, 1]
+position = [0, 1.6, 1]
 
 # Rotation in world space (x, y, z, w) as a quaternion
 rotation = [0, 0, 0, 1]
