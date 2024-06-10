@@ -5,6 +5,8 @@ import hl2ss_imshow
 import hl2ss
 import hl2ss_lnm
 import hl2ss_rus
+from scipy.spatial.transform import Rotation as R
+import numpy as np
 
 # Settings --------------------------------------------------------------------
 
@@ -42,7 +44,7 @@ decoded_format = 'bgr24'
 position = [0, 1.6, 1]
 
 # Initial rotation in world space (x, y, z, w) as a quaternion
-rotation = [0, 0, 0, 1]
+rotation = R.from_quat([0, 0, 0, 1])
 
 # Initial scale in meters
 scale = [0.2, 0.2, 0.2]
@@ -57,9 +59,10 @@ rotate_increment = 10  # degrees
 #------------------------------------------------------------------------------
 
 enable = True
+cube_visible = True
 
 def on_press(key):
-    global enable, position, rotation
+    global enable, position, rotation, cube_visible
     try:
         # print(f'key {key.char} pressed')
         # forward, back, left, right
@@ -80,19 +83,22 @@ def on_press(key):
         # pitch, yaw, and roll are a bit more complex because they are quaternions
         # pitch
         elif key.char == 'i':
-            rotation[0] -= rotate_increment
+            rotation *= R.from_euler('x', -rotate_increment, degrees=True)
         elif key.char == 'k':
-            rotation[0] += rotate_increment
+            rotation *= R.from_euler('x', rotate_increment, degrees=True)
         # yaw
         elif key.char == 'j':
-            rotation[1] -= rotate_increment
+            rotation *= R.from_euler('y', -rotate_increment, degrees=True)
         elif key.char == 'l':
-            rotation[1] += rotate_increment
+            rotation *= R.from_euler('y', rotate_increment, degrees=True)
         # roll
         elif key.char == 'u':
-            rotation[2] -= rotate_increment
+            rotation *= R.from_euler('z', -rotate_increment, degrees=True)
         elif key.char == 'o':
-            rotation[2] += rotate_increment
+            rotation *= R.from_euler('z', rotate_increment, degrees=True)
+        # toggle cube visibility
+        elif key.char == 't':
+            cube_visible = not cube_visible
     except AttributeError:
         if key == keyboard.Key.esc:
             enable = False
@@ -100,7 +106,7 @@ def on_press(key):
 
 # Thread function for hologram manipulation
 def hologram_thread():
-    global enable
+    global enable, cube_visible
     ipc = hl2ss_lnm.ipc_umq(host, hl2ss.IPCPort.UNITY_MESSAGE_QUEUE)
     ipc.open()
 
@@ -111,7 +117,7 @@ def hologram_thread():
     display_list.remove_all()  # Remove all objects that were created remotely
     display_list.create_primitive(hl2ss_rus.PrimitiveType.Cube)  # Create a cube, server will return its id
     display_list.set_target_mode(hl2ss_rus.TargetMode.UseLast)  # Set server to use the last created object as target, this avoids waiting for the id of the cube
-    display_list.set_world_transform(key, position, rotation, scale)  # Set the world transform of the cube
+    display_list.set_world_transform(key, position, rotation.as_quat(), scale)  # Set the world transform of the cube
     display_list.set_color(key, rgba)  # Set the color of the cube
     display_list.set_active(key, hl2ss_rus.ActiveState.Active)  # Make the cube visible
     display_list.set_target_mode(hl2ss_rus.TargetMode.UseID)  # Restore target mode
@@ -125,7 +131,8 @@ def hologram_thread():
     while enable:
         display_list = hl2ss_rus.command_buffer()
         display_list.begin_display_list()
-        display_list.set_world_transform(key, position, rotation, scale)
+        display_list.set_world_transform(key, position, rotation.as_quat(), scale)
+        display_list.set_active(key, hl2ss_rus.ActiveState.Active if cube_visible else hl2ss_rus.ActiveState.Inactive)  # Set visibility
         display_list.end_display_list()
         ipc.push(display_list)
         results = ipc.pull(display_list)
