@@ -38,7 +38,7 @@ profile = hl2ss.VideoProfile.H265_MAIN
 # Options include: 'bgr24','rgb24','bgra','rgba','gray8'
 decoded_format = 'bgr24'
 
-# Cube parameters -------------------------------------------------------------
+# Arrow parameters ------------------------------------------------------------
 
 # Initial position in world space (x, y, z) in meters
 position = [0, 1.6, 1]
@@ -59,10 +59,10 @@ rotate_increment = 10  # degrees
 #------------------------------------------------------------------------------
 
 enable = True
-cube_visible = True
+pointer_visible = True
 
 def on_press(key):
-    global enable, position, rotation, cube_visible
+    global enable, position, rotation, pointer_visible
     try:
         # print(f'key {key.char} pressed')
         # forward, back, left, right
@@ -96,9 +96,9 @@ def on_press(key):
             rotation *= R.from_euler('z', -rotate_increment, degrees=True)
         elif key.char == 'o':
             rotation *= R.from_euler('z', rotate_increment, degrees=True)
-        # toggle cube visibility
+        # toggle pointer visibility
         elif key.char == 't':
-            cube_visible = not cube_visible
+            pointer_visible = not pointer_visible
     except AttributeError:
         if key == keyboard.Key.esc:
             enable = False
@@ -106,7 +106,7 @@ def on_press(key):
 
 # Thread function for hologram manipulation
 def hologram_thread():
-    global enable, cube_visible
+    global enable, pointer_visible
     ipc = hl2ss_lnm.ipc_umq(host, hl2ss.IPCPort.UNITY_MESSAGE_QUEUE)
     ipc.open()
 
@@ -126,13 +126,13 @@ def hologram_thread():
     results = ipc.pull(display_list)  # Get results from server
     key = results[2]  # Get the cube id, created by the 3rd command in the list
 
-    print(f'Created cube with id {key}')
+    print(f'Created arrow with id {key}')
 
     while enable:
         display_list = hl2ss_rus.command_buffer()
         display_list.begin_display_list()
         display_list.set_world_transform(key, position, rotation.as_quat(), scale)
-        display_list.set_active(key, hl2ss_rus.ActiveState.Active if cube_visible else hl2ss_rus.ActiveState.Inactive)  # Set visibility
+        display_list.set_active(key, hl2ss_rus.ActiveState.Active if pointer_visible else hl2ss_rus.ActiveState.Inactive)  # Set visibility
         display_list.end_display_list()
         ipc.push(display_list)
         results = ipc.pull(display_list)
@@ -141,7 +141,7 @@ def hologram_thread():
     command_buffer = hl2ss_rus.command_buffer()
     command_buffer.remove(key)
     ipc.push(command_buffer)
-    resultes = ipc.pull(command_buffer)
+    results = ipc.pull(command_buffer)
 
     ipc.close()
 
@@ -178,11 +178,4 @@ if __name__ == "__main__":
     hologram_thread = threading.Thread(target=hologram_thread)
     video_stream_thread = threading.Thread(target=video_stream_thread)
 
-    hologram_thread.start()
-    video_stream_thread.start()
-
-    hologram_thread.join()
-    video_stream_thread.join()
-
-    listener.join()
-    cv2.destroyAllWindows()
+   

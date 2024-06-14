@@ -1,17 +1,7 @@
-#------------------------------------------------------------------------------
-# This script receives video from the HoloLens front RGB camera and plays it.
-# The camera supports various resolutions and framerates. See
-# https://github.com/jdibenes/hl2ss/blob/main/etc/pv_configurations.txt
-# for a list of supported formats. The default configuration is 1080p 30 FPS. 
-# The stream supports three operating modes: 0) video, 1) video + camera pose, 
-# 2) query calibration (single transfer).
-# Press esc to stop.
-#------------------------------------------------------------------------------
-
+import asyncio
+import websockets
 from pynput import keyboard
-
 import cv2
-import hl2ss_imshow
 import hl2ss
 import hl2ss_lnm
 
@@ -21,40 +11,34 @@ import hl2ss_lnm
 host = "192.168.2.39"
 
 # Operating mode
-# 0: video
-# 1: video + camera pose
-# 2: query calibration (single transfer)
 mode = hl2ss.StreamMode.MODE_1
 
 # Enable Mixed Reality Capture (Holograms)
 enable_mrc = True
 
 # Camera parameters
-width     = 1920
-height    = 1080
+width = 1920
+height = 1080
 framerate = 30
 
 # Framerate denominator (must be > 0)
-# Effective FPS is framerate / divisor
 divisor = 1 
 
 # Video encoding profile
 profile = hl2ss.VideoProfile.H265_MAIN
 
 # Decoded format
-# Options include:
-# 'bgr24'
-# 'rgb24'
-# 'bgra'
-# 'rgba'
-# 'gray8'
 decoded_format = 'bgr24'
+
+# WebSocket settings
+ws_host = "localhost"
+ws_port = 8765
 
 #------------------------------------------------------------------------------
 
 hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=enable_mrc)
 
-if (mode == hl2ss.StreamMode.MODE_2):
+if mode == hl2ss.StreamMode.MODE_2:
     data = hl2ss_lnm.download_calibration_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, width, height, framerate)
 else:
     enable = True
@@ -70,11 +54,25 @@ else:
     client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=mode, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
     client.open()
 
-    while (enable):
-        data = client.get_next_packet()
+    async def send_video_frame(websocket, path):
+        global enable
+        try:
+            while enable:
+                data = client.get_next_packet()
+                frame = data.payload.image
+                _, buffer = cv2.imencode('.jpg', frame)
+                await websocket.send(buffer.tobytes())
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            await websocket.close()
 
-        cv2.imshow('Video', data.payload.image)
-        cv2.waitKey(1)
+    async def main():
+        async with websockets.serve(send_video_frame, ws_host, ws_port):
+            print(f"WebSocket server started at ws://{ws_host}:{ws_port}")
+            await asyncio.Future()  # run forever
+
+    asyncio.run(main())
 
     client.close()
     listener.join()
