@@ -1,80 +1,46 @@
-import asyncio
-import websockets
-from pynput import keyboard
+from flask import Flask, Response
 import cv2
 import hl2ss
 import hl2ss_lnm
 
-# Settings --------------------------------------------------------------------
+app = Flask(__name__)
 
-# HoloLens address
+# Settings
 host = "192.168.2.39"
-
-# Operating mode
 mode = hl2ss.StreamMode.MODE_1
-
-# Enable Mixed Reality Capture (Holograms)
 enable_mrc = True
-
-# Camera parameters
 width = 1920
 height = 1080
 framerate = 30
-
-# Framerate denominator (must be > 0)
-divisor = 1 
-
-# Video encoding profile
+divisor = 1
 profile = hl2ss.VideoProfile.H265_MAIN
-
-# Decoded format
 decoded_format = 'bgr24'
-
-# WebSocket settings
-ws_host = "localhost"
-ws_port = 8765
-
-#------------------------------------------------------------------------------
 
 hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=enable_mrc)
 
-if mode == hl2ss.StreamMode.MODE_2:
-    data = hl2ss_lnm.download_calibration_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, width, height, framerate)
-else:
-    enable = True
+client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=mode, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
+client.open()
 
-    def on_press(key):
-        global enable
-        enable = key != keyboard.Key.esc
-        return enable
+def generate_frames():
+    while True:
+        data = client.get_next_packet()
+        frame = data.payload.image
 
-    listener = keyboard.Listener(on_press=on_press)
-    listener.start()
+        # Encode the frame to JPEG format
+        _, buffer = cv2.imencode('.jpg', frame)
+        frame_bytes = buffer.tobytes()
 
-    client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=mode, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
-    client.open()
+        # Yield the frame as a multipart HTTP response
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
-    async def send_video_frame(websocket, path):
-        global enable
-        try:
-            while enable:
-                data = client.get_next_packet()
-                frame = data.payload.image
-                _, buffer = cv2.imencode('.jpg', frame)
-                await websocket.send(buffer.tobytes())
-        except Exception as e:
-            print(f"Error: {e}")
-        finally:
-            await websocket.close()
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_frames(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
-    async def main():
-        async with websockets.serve(send_video_frame, ws_host, ws_port):
-            print(f"WebSocket server started at ws://{ws_host}:{ws_port}")
-            await asyncio.Future()  # run forever
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
 
-    asyncio.run(main())
-
-    client.close()
-    listener.join()
-
+client.close()
 hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
