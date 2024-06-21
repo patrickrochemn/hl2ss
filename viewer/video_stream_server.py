@@ -33,9 +33,12 @@ print("Started HoloLens video subsystem")
 client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=hl2ss.StreamMode.MODE_1, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
 client.open()
 
-def send_video_frame(client, server, frame):
+def send_video_frame(server, frame):
     ret, buffer = cv2.imencode('.jpg', frame)
-    server.send_message_to_all(buffer.tobytes())
+    if ret:
+        server.send_message_to_all(buffer.tobytes())
+    else:
+        print("Failed to encode frame")
 
 def generate_frames(client, server):
     while True:
@@ -43,10 +46,10 @@ def generate_frames(client, server):
             data = client.get_next_packet()
             frame = data.payload.image
             # Send the frame over WebSocket
-            send_video_frame(client, server, frame)
+            send_video_frame(server, frame)
         except Exception as e:
             print(f"Error during frame generation: {e}")
-            break
+            continue  # Skip this frame and continue with the next one
 
 # WebSocket event handlers
 def new_client(client, server):
