@@ -39,7 +39,7 @@ framerate = 30
 divisor = 1 
 
 # Video encoding profile
-profile = hl2ss.VideoProfile.H265_MAIN
+profile = hl2ss.VideoProfile.H265_BASE
 
 # Decoded format
 # Options include:
