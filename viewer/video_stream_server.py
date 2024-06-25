@@ -6,7 +6,7 @@ from websocket_server import WebsocketServer
 
 # Settings --------------------------------------------------------------------
 # HoloLens address
-host = "192.168.2.39"
+host = "192.168.2.38"
 
 # Camera parameters
 width = 1920
