@@ -5,10 +5,11 @@ import hl2ss
 import hl2ss_lnm
 import hl2ss_rus
 from scipy.spatial.transform import Rotation as R
+import pygame
 
 # Settings --------------------------------------------------------------------
 # HoloLens address
-host = "192.168.1.198"
+host = "192.168.1.38"
 
 # Camera parameters
 width = 1920
@@ -19,7 +20,7 @@ framerate = 30
 divisor = 1 
 
 # Video encoding profile
-profile = hl2ss.VideoProfile.H265_MAIN
+profile = hl2ss.VideoProfile.H264_BASE
 
 # Decoded format
 decoded_format = 'bgr24'
@@ -43,30 +44,37 @@ rotate_increment = 10  # degrees
 enable = True
 pointer_visible = True
 
+# Initialize pygame for controller support
+pygame.init()
+pygame.joystick.init()
+controller = pygame.joystick.Joystick(0)
+controller.init()
+
 # Start HoloLens video subsystem
-#hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=True)
+hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=True)
 print("Started HoloLens video subsystem")
 
 # Initialize video client
-#client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=hl2ss.StreamMode.MODE_0, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
-#wwwwwwwhhhhhhclient.open()
+client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=hl2ss.StreamMode.MODE_0, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
+client.open()
 
-# def generate_frames(client):
-#     while enable:
-#         try:
-#             data = client.get_next_packet()
-#             frame = data.payload.image
-#             # Display the frame locally using OpenCV
-#             cv2.imshow('Video', frame)
-#             if cv2.waitKey(1) & 0xFF == 27:
-#                 break
-#         except Exception as e:
-#             print(f"Error during frame generation: {e}")
-#             break
+def generate_frames(client):
+    while enable:
+        try:
+            data = client.get_next_packet()
+            frame = data.payload.image
+            # Display the frame locally using OpenCV
+            cv2.imshow('Video', frame)
+            if cv2.waitKey(1) & 0xFF == 27:
+                break
+        except Exception as e:
+            print(f"Error during frame generation: {e}")
+            break
+    cv2.destroyAllWindows()
 
 # Hologram manipulation thread
 def hologram_thread():
-    global enable, pointer_visible
+    global enable, pointer_visible, position, rotation
     ipc = hl2ss_lnm.ipc_umq(host, hl2ss.IPCPort.UNITY_MESSAGE_QUEUE)
     ipc.open()
 
@@ -133,6 +141,7 @@ def hologram_thread():
     listener.start()
 
     while enable:
+        # Handle keyboard input
         display_list = hl2ss_rus.command_buffer()
         display_list.begin_display_list()
         display_list.set_world_transform(key, position, rotation.as_quat(), scale)
@@ -140,6 +149,20 @@ def hologram_thread():
         display_list.end_display_list()
         ipc.push(display_list)
         results = ipc.pull(display_list)
+
+        # Handle controller input
+        for event in pygame.event.get():
+            if event.type == pygame.JOYAXISMOTION:
+                axis = event.axis
+                value = event.value
+                if axis == 0:  # Left stick horizontal
+                    position[0] += value * move_increment
+                elif axis == 1:  # Left stick vertical
+                    position[2] -= value * move_increment
+                elif axis == 3:  # Right stick horizontal
+                    rotation *= R.from_euler('y', value * rotate_increment, degrees=True)
+                elif axis == 4:  # Right stick vertical
+                    rotation *= R.from_euler('x', value * rotate_increment, degrees=True)
 
     # Clean up
     command_buffer = hl2ss_rus.command_buffer()
@@ -150,12 +173,12 @@ def hologram_thread():
     ipc.close()
 
 # Start hologram manipulation thread
-hologram_thread = threading.Thread(target=hologram_thread)
-hologram_thread.start()
+hologram_thread_instance = threading.Thread(target=hologram_thread)
+hologram_thread_instance.start()
 
-# Start generating frames and send to clients
-# generate_frames(client)
+# Start generating frames and display them locally
+generate_frames(client)
 
-# client.close()
-# hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
-# print("Stopped HoloLens video subsystem")
+client.close()
+hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
+print("Stopped HoloLens video subsystem")
