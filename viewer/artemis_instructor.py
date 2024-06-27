@@ -44,25 +44,25 @@ enable = True
 pointer_visible = True
 
 # Start HoloLens video subsystem
-hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=True)
+#hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=True)
 print("Started HoloLens video subsystem")
 
 # Initialize video client
-client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=hl2ss.StreamMode.MODE_0, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
-client.open()
+#client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=hl2ss.StreamMode.MODE_0, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
+#wwwwwwwhhhhhhclient.open()
 
-def generate_frames(client):
-    while enable:
-        try:
-            data = client.get_next_packet()
-            frame = data.payload.image
-            # Display the frame locally using OpenCV
-            cv2.imshow('Video', frame)
-            if cv2.waitKey(1) & 0xFF == 27:
-                break
-        except Exception as e:
-            print(f"Error during frame generation: {e}")
-            break
+# def generate_frames(client):
+#     while enable:
+#         try:
+#             data = client.get_next_packet()
+#             frame = data.payload.image
+#             # Display the frame locally using OpenCV
+#             cv2.imshow('Video', frame)
+#             if cv2.waitKey(1) & 0xFF == 27:
+#                 break
+#         except Exception as e:
+#             print(f"Error during frame generation: {e}")
+#             break
 
 # Hologram manipulation thread
 def hologram_thread():
@@ -154,8 +154,8 @@ hologram_thread = threading.Thread(target=hologram_thread)
 hologram_thread.start()
 
 # Start generating frames and send to clients
-generate_frames(client)
+# generate_frames(client)
 
-client.close()
-hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
-print("Stopped HoloLens video subsystem")
+# client.close()
+# hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
+# print("Stopped HoloLens video subsystem")
