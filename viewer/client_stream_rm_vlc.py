@@ -16,7 +16,7 @@ import hl2ss_lnm
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = "192.168.1.7"
+host = "192.168.2.38"
 
 # Port
 # Options:
@@ -30,7 +30,7 @@ port = hl2ss.StreamPort.RM_VLC_LEFTFRONT
 # 0: video
 # 1: video + rig pose
 # 2: query calibration (single transfer)
-mode = hl2ss.StreamMode.MODE_1
+mode = hl2ss.StreamMode.MODE_0
 
 # Framerate denominator (must be > 0)
 # Effective framerate is framerate / divisor
