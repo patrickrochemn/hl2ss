@@ -27,7 +27,7 @@ host = "192.168.1.38"
 mode = hl2ss.StreamMode.MODE_0
 
 # Enable Mixed Reality Capture (Holograms)
-enable_mrc = True
+enable_mrc = False
 
 # Enable Shared Capture
 # If another program is already using the PV camera, you can still stream it by

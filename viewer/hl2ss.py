@@ -22,6 +22,7 @@ class StreamPort:
     SPATIAL_INPUT        = 3812
     EXTENDED_EYE_TRACKER = 3817
     EXTENDED_AUDIO       = 3818
+    PERSONAL_VIDEO_2     = 3819
 
 
 # IPC TCP Ports
