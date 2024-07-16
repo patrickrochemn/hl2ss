@@ -57,21 +57,29 @@ for port in ports:
     client.open()
     clients.append(client)
 
+def rotate_image(image, angle):
+    (h, w) = image.shape[:2]
+    center = (w // 2, h // 2)
+    matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(image, matrix, (w, h))
+    return rotated
+
 while enable:
     frames = []
     for client in clients:
         data = client.get_next_packet()
         frames.append(data.payload)
 
-    # Assuming the frames are 640x480, create a blank image to stitch frames
-    if len(frames) == 4:
-        top_row = np.hstack((frames[2], frames[0]))  # Left-left and Left-front
-        bottom_row = np.hstack((frames[1], frames[3]))  # Right-front and Right-right
-        stitched_frame = np.vstack((top_row, bottom_row))
-    elif len(frames) == 2:
-        stitched_frame = np.hstack((frames[0], frames[1]))
-    else:
-        stitched_frame = frames[0]
+    # Rotate frames as specified
+    frame_leftfront = rotate_image(frames[0], -90)  # Top-left
+    frame_rightfront = rotate_image(frames[1], 90)  # Top-right
+    frame_leftleft = rotate_image(frames[2], 90)  # Bottom-left
+    frame_rightright = rotate_image(frames[3], -90)  # Bottom-right (corrected)
+
+    # Stitch frames together
+    top_row = np.hstack((frame_leftleft, frame_leftfront))
+    bottom_row = np.hstack((frame_rightfront, frame_rightright))
+    stitched_frame = np.vstack((top_row, bottom_row))
 
     cv2.imshow('Stitched Video', stitched_frame)
     cv2.waitKey(1)
