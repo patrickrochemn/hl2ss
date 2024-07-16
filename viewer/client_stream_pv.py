@@ -18,7 +18,7 @@ import hl2ss_lnm
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = "192.168.1.38"
+host = "192.168.2.38"
 
 # Operating mode
 # 0: video
