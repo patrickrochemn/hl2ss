@@ -24,7 +24,7 @@ host = "192.168.2.38"
 # hl2ss.StreamPort.RM_VLC_LEFTLEFT
 # hl2ss.StreamPort.RM_VLC_RIGHTFRONT
 # hl2ss.StreamPort.RM_VLC_RIGHTRIGHT
-port = hl2ss.StreamPort.RM_VLC_LEFTFRONT
+port = hl2ss.StreamPort.RM_VLC_RIGHTFRONT
 
 # Operating mode
 # 0: video
@@ -69,9 +69,13 @@ client.open()
 
 while (enable):
     data = client.get_next_packet()
-    print(f'Pose at time {data.timestamp}')
-    print(data.pose)
-    cv2.imshow('Video', data.payload)
+    # print(f'Pose at time {data.timestamp}')
+    # print(data.pose)
+    
+    # Rotate the image 90 degrees counter-clockwise
+    rotated_image = cv2.rotate(data.payload, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    
+    cv2.imshow('Video', rotated_image)
     cv2.waitKey(1)
 
 client.close()
