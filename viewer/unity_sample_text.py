@@ -13,7 +13,7 @@ import hl2ss_rus
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '192.168.2.39'
+host = '192.168.2.38'
 
 # Position in world space (x, y, z) in meters
 position = [0, 1.6, 1]
