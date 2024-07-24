@@ -9,6 +9,7 @@ using Microsoft.MixedReality.Toolkit.Audio;
 public class RemoteUnityScene : MonoBehaviour
 {
     public GameObject m_tts;
+    public GameObject textPrefab;
 
     private Dictionary<int, GameObject> m_remote_objects;
     private bool m_loop;
@@ -61,6 +62,7 @@ public class RemoteUnityScene : MonoBehaviour
         case  18: ret = MSG_BeginDisplayList(data);  break;
         case  19: ret = MSG_EndDisplayList(data);    break;
         case  20: ret = MSG_SetTargetMode(data);     break;
+        case  21: ret = MSG_CreateInteractableText(data); break;
         case ~0U: ret = MSG_Disconnect(data);        break;
         }
 
@@ -283,6 +285,26 @@ public class RemoteUnityScene : MonoBehaviour
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.verticalAlignment = VerticalAlignmentOptions.Middle;
         tmp.text = "";
+
+        return AddGameObject(go);
+    }
+
+    uint MSG_CreateInteractableText(byte[] data)
+    {
+        GameObject go = Instantiate(textPrefab, transform);
+
+        if (data.Length >= 44)
+        {
+            Vector3 position;
+            Quaternion rotation;
+            Vector3 locscale;
+            UnpackTransform(data, 0, out position, out rotation, out locscale);
+
+            go.transform.SetPositionAndRotation(position, rotation);
+            go.transform.localScale = locscale;
+        }
+
+        go.SetActive(false);
 
         return AddGameObject(go);
     }

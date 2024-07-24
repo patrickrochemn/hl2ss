@@ -56,12 +56,13 @@ extern void RemoteUnityScene_MSG_SetLocalTransform_mB14940BBF11FD8446A75279BC9A3
 extern void RemoteUnityScene_MSG_SetColor_mB5960EF9A4FBDF13E5AF3D1839C993B2E0D4D68D (void);
 extern void RemoteUnityScene_MSG_SetTexture_mA49CBA3A7750C88E3FA9B46459B9CBFB7A872C24 (void);
 extern void RemoteUnityScene_MSG_CreateText_mBA36D5C2EC636996A8AB66194A593AB8F76CC5EE (void);
+extern void RemoteUnityScene_MSG_CreateInteractableText_m63A8493BBF62762717B50673EC4247B261C011A5 (void);
 extern void RemoteUnityScene_MSG_SetText_m11E7D4B08E9A167CB96CD6AC7C4EEE94F2FA0D1E (void);
 extern void RemoteUnityScene_MSG_Say_m4BB463145A1EDF983D331309E6A2A5D228306155 (void);
 extern void RemoteUnityScene__ctor_m4D77EEE7ABB52DEB2D9E92AD75F00DF15CD1AFFE (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033 (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1 (void);
-static Il2CppMethodPointer s_methodPointers[49] = 
+static Il2CppMethodPointer s_methodPointers[50] = 
 {
 	hl2ss_InitializeStreamsOnUI_mBA35493A4FFB4B973F856ED4DB33DC0BA8E65709,
 	hl2ss_DebugMessage_m71B83F2846E00B127AED5F9841209023F1602D4B,
@@ -107,13 +108,14 @@ static Il2CppMethodPointer s_methodPointers[49] =
 	RemoteUnityScene_MSG_SetColor_mB5960EF9A4FBDF13E5AF3D1839C993B2E0D4D68D,
 	RemoteUnityScene_MSG_SetTexture_mA49CBA3A7750C88E3FA9B46459B9CBFB7A872C24,
 	RemoteUnityScene_MSG_CreateText_mBA36D5C2EC636996A8AB66194A593AB8F76CC5EE,
+	RemoteUnityScene_MSG_CreateInteractableText_m63A8493BBF62762717B50673EC4247B261C011A5,
 	RemoteUnityScene_MSG_SetText_m11E7D4B08E9A167CB96CD6AC7C4EEE94F2FA0D1E,
 	RemoteUnityScene_MSG_Say_m4BB463145A1EDF983D331309E6A2A5D228306155,
 	RemoteUnityScene__ctor_m4D77EEE7ABB52DEB2D9E92AD75F00DF15CD1AFFE,
 	UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033,
 	UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1,
 };
-static const int32_t s_InvokerIndices[49] = 
+static const int32_t s_InvokerIndices[50] = 
 {
 	11235,
 	11223,
@@ -161,6 +163,7 @@ static const int32_t s_InvokerIndices[49] =
 	5742,
 	5742,
 	5742,
+	5742,
 	7858,
 	11475,
 	7858,
@@ -169,7 +172,7 @@ IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	49,
+	50,
 	s_methodPointers,
 	0,
 	NULL,
