@@ -56,6 +56,7 @@ display_list.set_target_mode(hl2ss_rus.TargetMode.UseLast) # Set server to use t
 display_list.set_text(key, font_size, rgba, initial_text) # Set text
 display_list.set_world_transform(key, position, rotation, [1, 1, 1]) # Set the world transform of the text object
 display_list.set_active(key, hl2ss_rus.ActiveState.Active) # Make the text object visible
+
 display_list.set_target_mode(hl2ss_rus.TargetMode.UseID) # Restore target mode
 display_list.end_display_list() # End command sequence
 ipc.push(display_list) # Send commands to server

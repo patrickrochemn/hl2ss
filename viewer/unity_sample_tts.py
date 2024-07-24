@@ -10,7 +10,7 @@ import hl2ss_rus
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '192.168.2.39'
+host = '192.168.2.38'
 
 # Text
 text = 'Welcome to Artemis!'

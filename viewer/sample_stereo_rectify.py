@@ -17,14 +17,14 @@ import hl2ss_3dcv
 # Settings --------------------------------------------------------------------
 
 # HoloLens 2 address
-host = '192.168.1.7'
+host = '192.168.2.38'
 
 # Ports
 port_left  = hl2ss.StreamPort.RM_VLC_LEFTFRONT
 port_right = hl2ss.StreamPort.RM_VLC_RIGHTFRONT
 
 # Calibration folder (must exist but can be empty)
-calibration_path = '../calibration'
+calibration_path = 'calibration'
 
 # Buffer size in seconds
 buffer_size = 10
