@@ -21,7 +21,7 @@ position = [0, 1.6, 1]
 rotation = [0, 0, 0, 1]
 
 # Initial text
-initial_text = 'Hello from Python!\nNewline test'
+initial_text = 'HR: 110\nBP: 110/80\nO2: 98%'
 
 # Font size
 font_size = 0.4
@@ -66,7 +66,8 @@ key = results[2] # Get the text object id, created by the 3rd command in the lis
 print(f'Created text object with id {key}')
 
 # Function to update the text of the created TextMeshPro object
-def update_text(new_text):
+def update_text(hr, systolic, diastolic, o2):
+    new_text = f'HR: {hr}\nBP: {systolic}/{diastolic}\nO2: {o2}%'
     command_buffer = hl2ss_rus.command_buffer()
     command_buffer.begin_display_list()
     command_buffer.set_text(key, font_size, rgba, new_text) # Update the text
@@ -79,8 +80,11 @@ def update_text(new_text):
 def listen_for_input():
     while not stop_event.is_set():
         try:
-            new_text = input("Enter new text: ")
-            update_text(new_text)
+            hr = int(input("Enter new heart rate: "))
+            systolic = int(input("Enter new systolic blood pressure: "))
+            diastolic = int(input("Enter new diastolic blood pressure: "))
+            o2 = int(input("Enter new O2 saturation: "))
+            update_text(hr, systolic, diastolic, o2)
         except Exception as e:
             print(f"Error: {e}")
 
