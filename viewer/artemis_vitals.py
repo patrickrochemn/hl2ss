@@ -21,7 +21,7 @@ position = [0, 1.6, 1]
 rotation = [0, 0, 0, 1]
 
 # Initial text
-initial_text = 'Hello from Python!'
+initial_text = 'Hello from Python!\nNewline test'
 
 # Font size
 font_size = 0.4
