@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Microsoft.MixedReality.Toolkit.Audio;
+using Microsoft.MixedReality.Toolkit.UI;
+using Microsoft.MixedReality.Toolkit.Input;
 
 public class RemoteUnityScene : MonoBehaviour
 {
@@ -63,6 +65,7 @@ public class RemoteUnityScene : MonoBehaviour
         case  19: ret = MSG_EndDisplayList(data);    break;
         case  20: ret = MSG_SetTargetMode(data);     break;
         case  21: ret = MSG_CreateInteractableText(data); break;
+        case  22: ret = MSG_SetInteractableText(data); break;
         case ~0U: ret = MSG_Disconnect(data);        break;
         }
 
@@ -307,6 +310,32 @@ public class RemoteUnityScene : MonoBehaviour
         go.SetActive(false);
 
         return AddGameObject(go);
+    }
+
+    uint MSG_SetInteractableText(byte[] data)
+    {
+        if (data.Length < 24) { return 0; }
+
+        GameObject go;
+        if (!m_remote_objects.TryGetValue(GetKey(data), out go)) { return 0; }
+        TextMeshPro tmp = go.GetComponent<TextMeshPro>();
+        if (tmp == null) { return 0; }
+
+        string str;
+        if (data.Length > 24)
+        {
+            byte[] str_bytes = new byte[data.Length - 24];
+            Array.Copy(data, 24, str_bytes, 0, str_bytes.Length);
+            try { str = System.Text.Encoding.UTF8.GetString(str_bytes); } catch { return 0; }
+        }
+        else
+        {
+            str = "";
+        }
+
+        tmp.text = str;
+
+        return 1;
     }
 
     // OK

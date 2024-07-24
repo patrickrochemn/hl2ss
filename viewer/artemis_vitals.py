@@ -47,13 +47,13 @@ ipc.open()
 
 key = 0
 
-# Create the TextMeshPro object
+# Create the Interactable Text object
 display_list = hl2ss_rus.command_buffer()
 display_list.begin_display_list() # Begin command sequence
 display_list.remove_all() # Remove all objects that were created remotely
-display_list.create_text() # Create text object, server will return its id
+display_list.create_interactable_text() # Create text object, server will return its id
 display_list.set_target_mode(hl2ss_rus.TargetMode.UseLast) # Set server to use the last created object as target, this avoids waiting for the id of the text object
-display_list.set_text(key, font_size, rgba, initial_text) # Set text
+# display_list.set_text(key, font_size, rgba, initial_text) # Set text
 display_list.set_world_transform(key, position, rotation, [1, 1, 1]) # Set the world transform of the text object
 display_list.set_active(key, hl2ss_rus.ActiveState.Active) # Make the text object visible
 
@@ -63,7 +63,7 @@ ipc.push(display_list) # Send commands to server
 results = ipc.pull(display_list) # Get results from server
 key = results[2] # Get the text object id, created by the 3rd command in the list
 
-print(f'Created text object with id {key}')
+print(f'Created interactable text object with id {key}')
 
 # Function to update the text of the created TextMeshPro object
 def update_text(hr, systolic, diastolic, o2):

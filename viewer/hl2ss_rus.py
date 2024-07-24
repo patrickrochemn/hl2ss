@@ -51,6 +51,12 @@ class command_buffer(hl2ss.umq_command_buffer):
     def create_text(self): 
         self.add(6, b'')
 
+    def create_interactable_text(self):
+        self.add(21, b'')
+
+    def set_interactable_text(self, key, text):
+        self.__commands.append([22, struct.pack('<I', key) + text.encode('utf-8')])
+
     def set_text(self, key, font_size, rgba, string):
         self.add(7, struct.pack('<Ifffff', key, font_size, rgba[0], rgba[1], rgba[2], rgba[3]) + string.encode('utf-8'))
 
