@@ -12,6 +12,7 @@ public class RemoteUnityScene : MonoBehaviour
 {
     public GameObject m_tts;
     public GameObject textPrefab;
+    public GameObject arrowPrefab;
 
     private Dictionary<int, GameObject> m_remote_objects;
     private bool m_loop;
@@ -66,6 +67,9 @@ public class RemoteUnityScene : MonoBehaviour
         case  20: ret = MSG_SetTargetMode(data);     break;
         case  21: ret = MSG_CreateInteractableText(data); break;
         case  22: ret = MSG_SetInteractableText(data); break;
+        case  23: ret = MSG_CreateArrow(data); break;
+        case  24: ret = MSG_SetArrowTransform(data); break;
+        case  25: ret = MSG_ToggleArrowVisibility(data); break;
         case ~0U: ret = MSG_Disconnect(data);        break;
         }
 
@@ -368,6 +372,60 @@ public class RemoteUnityScene : MonoBehaviour
         return 1;
     }
 
+    uint MSG_CreateArrow(byte[] data)
+    {
+        GameObject go = Instantiate(arrowPrefab, transform);
+
+        if (data.Length >= 44)
+        {
+            Vector3 position;
+            Quaternion rotation;
+            Vector3 locscale;
+            UnpackTransform(data, 0, out position, out rotation, out locscale);
+
+            go.transform.SetPositionAndRotation(position, rotation);
+            go.transform.localScale = locscale;
+        }
+
+        go.SetActive(false);
+
+        return AddGameObject(go);
+    }
+
+    uint MSG_SetArrowTransform(byte[] data)
+    {
+        if(data.Length < 44) { return 0; }
+
+        GameObject go;
+        if (!m_remote_objects.TryGetValue(GetKey(data), out go)) { return 0; }
+
+        Vector3 position;
+        Quaternion rotation;
+        Vector3 locscale;
+
+        UnpackTransform(data, 0, out position, out rotation, out locscale);
+
+        go.transform.parent = null;
+
+        go.transform.SetPositionAndRotation(position, rotation);
+        go.transform.localScale = locscale;
+
+        return 1;
+    }
+
+    uint MSG_ToggleArrowVisibility(byte[] data)
+    {
+        if (data.Length < 4) { return 0; }
+
+        GameObject go;
+        if (!m_remote_objects.TryGetValue(GetKey(data), out go)) { return 0; }
+
+        bool isVisible = BitConverter.ToInt32(data, 0) != 0;
+        go.SetActive(isVisible);
+
+        return 1;
+    }
+    
     // OK
     uint MSG_Say(byte[] data)
     {

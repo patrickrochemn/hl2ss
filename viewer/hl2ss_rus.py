@@ -56,6 +56,23 @@ class command_buffer(hl2ss.umq_command_buffer):
 
     def set_interactable_text(self, key, text):
         self.__commands.append([22, struct.pack('<I', key) + text.encode('utf-8')])
+    
+    def create_arrow(self):
+        self.add(23, b'')
+
+    def set_arrow_transform(self, key, position, rotation, scale):
+        data = bytearray()
+        data.extend(struct.pack('i', key))
+        data.extend(struct.pack('fff', *position))
+        data.extend(struct.pack('ffff', *rotation))
+        data.extend(struct.pack('fff', *scale))
+        self.add(24, data)
+    
+    def toggle_arrow_visibility(self, key, visible):
+        data = bytearray()
+        data.extend(struct.pack('i', key))
+        data.extend(struct.pack('i', 1 if visible else 0))
+        self.add(25, data)
 
     def set_text(self, key, font_size, rgba, string):
         self.add(7, struct.pack('<Ifffff', key, font_size, rgba[0], rgba[1], rgba[2], rgba[3]) + string.encode('utf-8'))
