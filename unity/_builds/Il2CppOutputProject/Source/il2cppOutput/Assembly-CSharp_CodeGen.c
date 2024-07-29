@@ -59,11 +59,14 @@ extern void RemoteUnityScene_MSG_CreateText_mBA36D5C2EC636996A8AB66194A593AB8F76
 extern void RemoteUnityScene_MSG_CreateInteractableText_m63A8493BBF62762717B50673EC4247B261C011A5 (void);
 extern void RemoteUnityScene_MSG_SetInteractableText_mFB66196CD2FB7F6866283F27CA8C277F7F32E7B2 (void);
 extern void RemoteUnityScene_MSG_SetText_m11E7D4B08E9A167CB96CD6AC7C4EEE94F2FA0D1E (void);
+extern void RemoteUnityScene_MSG_CreateArrow_m477283C20B193BEFF4EC97437EFC240B82FE469D (void);
+extern void RemoteUnityScene_MSG_SetArrowTransform_m701AAD19D271BAE83384D564E343CEAC96A13076 (void);
+extern void RemoteUnityScene_MSG_ToggleArrowVisibility_mF4BE21924E8A86315DBCC61C5B9858769ACD9258 (void);
 extern void RemoteUnityScene_MSG_Say_m4BB463145A1EDF983D331309E6A2A5D228306155 (void);
 extern void RemoteUnityScene__ctor_m4D77EEE7ABB52DEB2D9E92AD75F00DF15CD1AFFE (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033 (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1 (void);
-static Il2CppMethodPointer s_methodPointers[51] = 
+static Il2CppMethodPointer s_methodPointers[54] = 
 {
 	hl2ss_InitializeStreamsOnUI_mBA35493A4FFB4B973F856ED4DB33DC0BA8E65709,
 	hl2ss_DebugMessage_m71B83F2846E00B127AED5F9841209023F1602D4B,
@@ -112,12 +115,15 @@ static Il2CppMethodPointer s_methodPointers[51] =
 	RemoteUnityScene_MSG_CreateInteractableText_m63A8493BBF62762717B50673EC4247B261C011A5,
 	RemoteUnityScene_MSG_SetInteractableText_mFB66196CD2FB7F6866283F27CA8C277F7F32E7B2,
 	RemoteUnityScene_MSG_SetText_m11E7D4B08E9A167CB96CD6AC7C4EEE94F2FA0D1E,
+	RemoteUnityScene_MSG_CreateArrow_m477283C20B193BEFF4EC97437EFC240B82FE469D,
+	RemoteUnityScene_MSG_SetArrowTransform_m701AAD19D271BAE83384D564E343CEAC96A13076,
+	RemoteUnityScene_MSG_ToggleArrowVisibility_mF4BE21924E8A86315DBCC61C5B9858769ACD9258,
 	RemoteUnityScene_MSG_Say_m4BB463145A1EDF983D331309E6A2A5D228306155,
 	RemoteUnityScene__ctor_m4D77EEE7ABB52DEB2D9E92AD75F00DF15CD1AFFE,
 	UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033,
 	UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1,
 };
-static const int32_t s_InvokerIndices[51] = 
+static const int32_t s_InvokerIndices[54] = 
 {
 	11235,
 	11223,
@@ -167,6 +173,9 @@ static const int32_t s_InvokerIndices[51] =
 	5742,
 	5742,
 	5742,
+	5742,
+	5742,
+	5742,
 	7858,
 	11475,
 	7858,
@@ -175,7 +184,7 @@ IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	51,
+	54,
 	s_methodPointers,
 	0,
 	NULL,
