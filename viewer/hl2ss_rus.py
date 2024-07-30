@@ -1,7 +1,5 @@
-
 import struct
 import hl2ss
-
 
 # 3D Primitive Types
 class PrimitiveType:
@@ -12,18 +10,15 @@ class PrimitiveType:
     Plane = 4
     Quad = 5
 
-
 # Server Target Mode
 class TargetMode:
     UseID = 0
     UseLast = 1
 
-
 # Object Active State
 class ActiveState:
     Inactive = 0
     Active = 1
-
 
 #------------------------------------------------------------------------------
 # Commands
@@ -62,7 +57,7 @@ class command_buffer(hl2ss.umq_command_buffer):
 
     def set_arrow_transform(self, key, position, rotation, scale):
         data = bytearray()
-        data.extend(struct.pack('i', key))
+        data.extend(struct.pack('I', key))  # Use unsigned int
         data.extend(struct.pack('fff', *position))
         data.extend(struct.pack('ffff', *rotation))
         data.extend(struct.pack('fff', *scale))
@@ -70,7 +65,7 @@ class command_buffer(hl2ss.umq_command_buffer):
     
     def toggle_arrow_visibility(self, key, visible):
         data = bytearray()
-        data.extend(struct.pack('i', key))
+        data.extend(struct.pack('I', key))  # Use unsigned int
         data.extend(struct.pack('i', 1 if visible else 0))
         self.add(25, data)
 
@@ -97,4 +92,3 @@ class command_buffer(hl2ss.umq_command_buffer):
 
     def set_target_mode(self, mode):
         self.add(20, struct.pack('<I', mode))
-
