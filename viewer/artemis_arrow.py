@@ -1,5 +1,6 @@
 #------------------------------------------------------------------------------
 # This script adds a 3D arrow object to the Unity scene.
+# Press esc to stop.
 #------------------------------------------------------------------------------
 
 from pynput import keyboard
@@ -20,9 +21,22 @@ position = [0, 1.6, 1]
 rotation = R.from_quat([0, 0, 0, 1])
 
 # Initial scale in meters
-scale = [1, 1, 1]
+scale = [7, 7, 7]
 
 enable = True
+
+stop_event = threading.Event()
+
+def on_press(key):
+    global enable
+    if key == keyboard.Key.esc:
+        enable = False
+        stop_event.set()
+        return False
+    return True
+
+listener = keyboard.Listener(on_press=on_press)
+listener.start()
 
 def hologram_thread():
     global enable, position, rotation, scale
@@ -46,8 +60,7 @@ def hologram_thread():
 
     print(f'Created arrow with id {key}')
 
-    while enable:
-        pass
+    stop_event.wait()
 
     # Clean up
     command_buffer = hl2ss_rus.command_buffer()
@@ -60,3 +73,6 @@ def hologram_thread():
 # Start hologram manipulation thread
 hologram_thread_instance = threading.Thread(target=hologram_thread)
 hologram_thread_instance.start()
+
+listener.join()
+hologram_thread_instance.join()
