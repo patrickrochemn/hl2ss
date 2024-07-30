@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# This script adds a 3D arrow object to the Unity scene.
+# This script adds a 3D arrow object to the Unity scene and updates its position, orientation, and visibility on keyboard input.
 # Press esc to stop.
 #------------------------------------------------------------------------------
 
@@ -23,19 +23,56 @@ rotation = R.from_quat([0, 0, 0, 1])
 # Initial scale in meters
 scale = [5, 5, 5]
 
+# Movement increments
+move_increment = 0.1
+rotate_increment = 10  # degrees
+
 enable = True
 pointer_visible = True
 
 stop_event = threading.Event()
 
 def on_press(key):
-    global enable, pointer_visible
-    if key == keyboard.Key.esc:
-        enable = False
-        stop_event.set()
-        return False
-    elif key.char == 't':
-        pointer_visible = not pointer_visible
+    global enable, pointer_visible, position, rotation
+    try:
+        if key == keyboard.Key.esc:
+            enable = False
+            stop_event.set()
+            return False
+        elif key.char == 't':
+            pointer_visible = not pointer_visible
+        # forward, back, left, right
+        elif key.char == 'w':
+            position[2] += move_increment
+        elif key.char == 's':
+            position[2] -= move_increment
+        elif key.char == 'a':
+            position[0] -= move_increment
+        elif key.char == 'd':
+            position[0] += move_increment
+        # up - y
+        elif key.char == 'y':
+            position[1] += move_increment
+        # down - h
+        elif key.char == 'h':
+            position[1] -= move_increment
+        # pitch
+        elif key.char == 'i':
+            rotation *= R.from_euler('x', -rotate_increment, degrees=True)
+        elif key.char == 'k':
+            rotation *= R.from_euler('x', rotate_increment, degrees=True)
+        # yaw
+        elif key.char == 'j':
+            rotation *= R.from_euler('y', -rotate_increment, degrees=True)
+        elif key.char == 'l':
+            rotation *= R.from_euler('y', rotate_increment, degrees=True)
+        # roll
+        elif key.char == 'u':
+            rotation *= R.from_euler('z', -rotate_increment, degrees=True)
+        elif key.char == 'o':
+            rotation *= R.from_euler('z', rotate_increment, degrees=True)
+    except AttributeError:
+        pass
     return True
 
 listener = keyboard.Listener(on_press=on_press)
@@ -64,10 +101,11 @@ def hologram_thread():
     print(f'Created arrow with id {key}')
 
     while enable:
-        # Toggle visibility
+        # Handle keyboard input for position and rotation
         display_list = hl2ss_rus.command_buffer()
         display_list.begin_display_list()
-        display_list.set_active(key, hl2ss_rus.ActiveState.Active if pointer_visible else hl2ss_rus.ActiveState.Inactive)
+        display_list.set_world_transform(key, position, rotation.as_quat(), scale)
+        display_list.set_active(key, hl2ss_rus.ActiveState.Active if pointer_visible else hl2ss_rus.ActiveState.Inactive)  # Set visibility
         display_list.end_display_list()
         ipc.push(display_list)
         results = ipc.pull(display_list)
