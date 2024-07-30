@@ -21,25 +21,28 @@ position = [0, 1.6, 1]
 rotation = R.from_quat([0, 0, 0, 1])
 
 # Initial scale in meters
-scale = [7, 7, 7]
+scale = [5, 5, 5]
 
 enable = True
+pointer_visible = True
 
 stop_event = threading.Event()
 
 def on_press(key):
-    global enable
+    global enable, pointer_visible
     if key == keyboard.Key.esc:
         enable = False
         stop_event.set()
         return False
+    elif key.char == 't':
+        pointer_visible = not pointer_visible
     return True
 
 listener = keyboard.Listener(on_press=on_press)
 listener.start()
 
 def hologram_thread():
-    global enable, position, rotation, scale
+    global enable, position, rotation, scale, pointer_visible
     ipc = hl2ss_lnm.ipc_umq(host, hl2ss.IPCPort.UNITY_MESSAGE_QUEUE)
     ipc.open()
 
@@ -60,7 +63,15 @@ def hologram_thread():
 
     print(f'Created arrow with id {key}')
 
-    stop_event.wait()
+    while enable:
+        # Toggle visibility
+        display_list = hl2ss_rus.command_buffer()
+        display_list.begin_display_list()
+        display_list.set_active(key, hl2ss_rus.ActiveState.Active if pointer_visible else hl2ss_rus.ActiveState.Inactive)
+        display_list.end_display_list()
+        ipc.push(display_list)
+        results = ipc.pull(display_list)
+        stop_event.wait(0.1)  # Short delay to avoid rapid toggling
 
     # Clean up
     command_buffer = hl2ss_rus.command_buffer()
