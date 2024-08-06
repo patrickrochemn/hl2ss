@@ -54,14 +54,18 @@ class command_buffer(hl2ss.umq_command_buffer):
     
     def create_arrow(self):
         self.add(23, b'')
+    
+    def set_arrow_transform(self, key, position, rotation, scale):
+        data = bytearray()
+        data.extend(struct.pack('I', key))
 
     def set_arrow_transform(self, key, position, rotation, scale):
         data = bytearray()
-        data.extend(struct.pack('I', key))  # Use unsigned int
+        data.extend(struct.pack('I', key))
         data.extend(struct.pack('fff', *position))
         data.extend(struct.pack('ffff', *rotation))
         data.extend(struct.pack('fff', *scale))
-        self.add(24, data)
+        self.add(25, data)
     
     def toggle_object_visibility(self, key, visible):
         data = bytearray()

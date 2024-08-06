@@ -360,6 +360,11 @@ public class RemoteUnityScene : MonoBehaviour
 
         UnpackTransform(data, 4, out deltaPosition, out deltaRotation, out deltaScale);
 
+        // Apply relative changes
+        go.transform.position += deltaPosition;
+        go.transform.rotation *= deltaRotation;
+        go.transform.localScale += deltaScale;
+
         return 1;
     }
 
