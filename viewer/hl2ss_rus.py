@@ -63,11 +63,11 @@ class command_buffer(hl2ss.umq_command_buffer):
         data.extend(struct.pack('fff', *scale))
         self.add(24, data)
     
-    def toggle_arrow_visibility(self, key, visible):
+    def toggle_object_visibility(self, key, visible):
         data = bytearray()
-        data.extend(struct.pack('I', key))  # Use unsigned int
-        data.extend(struct.pack('i', 1 if visible else 0))
-        self.add(25, data)
+        data.extend(struct.pack('I', key))
+        data.extend(struct.pack('I', 1 if visible else 0))
+        self.add(24, data)
 
     def set_text(self, key, font_size, rgba, string):
         self.add(7, struct.pack('<Ifffff', key, font_size, rgba[0], rgba[1], rgba[2], rgba[3]) + string.encode('utf-8'))

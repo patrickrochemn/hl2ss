@@ -1529,6 +1529,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_SetTargetMode_m
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_CreateInteractableText_m63A8493BBF62762717B50673EC4247B261C011A5 (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_SetInteractableText_mFB66196CD2FB7F6866283F27CA8C277F7F32E7B2 (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_CreateArrow_m477283C20B193BEFF4EC97437EFC240B82FE469D (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) ;
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_ToggleObjectVisibility_m2C017AFBA2DD4202FAC7DDAC5A65D7B08A41CFE6 (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_Disconnect_mCBF03C69B8130AF933710A2E8C48C8EA95ED44D7 (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) ;
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t Object_GetInstanceID_m554FF4073C9465F3835574CC084E68AAEEC6CC6A (Object_tC12DECB6760A7F2CBF65D9DCF18D044C2D97152C* __this, const RuntimeMethod* method) ;
 inline void Dictionary_2_Add_mA5013CBA44F1B1DC6398B4430E25EE98A9C11FDF (Dictionary_2_t3ED995699F3E88D06E5DA7362BEB7584DBD61662* __this, int32_t ___0_key, GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ___1_value, const RuntimeMethod* method)
@@ -2572,99 +2573,103 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_ProcessMessage_m8AD
 		{
 			case 0:
 			{
-				goto IL_0074;
+				goto IL_0078;
 			}
 			case 1:
 			{
-				goto IL_0081;
+				goto IL_0085;
 			}
 			case 2:
 			{
-				goto IL_008e;
+				goto IL_0092;
 			}
 			case 3:
 			{
-				goto IL_009b;
+				goto IL_009f;
 			}
 			case 4:
 			{
-				goto IL_00a8;
+				goto IL_00ac;
 			}
 			case 5:
 			{
-				goto IL_00b5;
+				goto IL_00b9;
 			}
 			case 6:
 			{
-				goto IL_00bf;
+				goto IL_00c6;
 			}
 			case 7:
 			{
-				goto IL_00c9;
+				goto IL_00d0;
 			}
 			case 8:
 			{
-				goto IL_00d3;
+				goto IL_00da;
 			}
 			case 9:
 			{
-				goto IL_0135;
+				goto IL_0146;
 			}
 			case 10:
 			{
-				goto IL_0135;
+				goto IL_0146;
 			}
 			case 11:
 			{
-				goto IL_0135;
+				goto IL_0146;
 			}
 			case 12:
 			{
-				goto IL_0135;
+				goto IL_0146;
 			}
 			case 13:
 			{
-				goto IL_0135;
+				goto IL_0146;
 			}
 			case 14:
 			{
-				goto IL_0135;
+				goto IL_0146;
 			}
 			case 15:
 			{
-				goto IL_0135;
+				goto IL_0146;
 			}
 			case 16:
 			{
-				goto IL_00dd;
+				goto IL_00e4;
 			}
 			case 17:
 			{
-				goto IL_00e7;
+				goto IL_00ee;
 			}
 			case 18:
 			{
-				goto IL_00f1;
+				goto IL_00f8;
 			}
 			case 19:
 			{
-				goto IL_00fb;
+				goto IL_0102;
 			}
 			case 20:
 			{
-				goto IL_0105;
+				goto IL_010c;
 			}
 			case 21:
 			{
-				goto IL_010f;
+				goto IL_0116;
 			}
 			case 22:
 			{
-				goto IL_0119;
+				goto IL_0120;
 			}
 			case 23:
 			{
-				goto IL_0123;
+				goto IL_012a;
+			}
+			case 24:
+			{
+				goto IL_0134;
 			}
 		}
 	}
@@ -2672,178 +2677,187 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_ProcessMessage_m8AD
 		uint32_t L_1 = ___0_command;
 		if ((((int32_t)L_1) == ((int32_t)(-1))))
 		{
-			goto IL_012d;
+			goto IL_013e;
 		}
 	}
 	{
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_0074:
+IL_0078:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_2 = ___1_data;
 		uint32_t L_3;
 		L_3 = RemoteUnityScene_MSG_CreatePrimitive_mF4913BED772ABACAD3006E01E77BBB86FEE1963F(__this, L_2, NULL);
 		V_0 = L_3;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_0081:
+IL_0085:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_4 = ___1_data;
 		uint32_t L_5;
 		L_5 = RemoteUnityScene_MSG_SetActive_mD884DCBB69C9876CFF886D4FEC8AACA6A2DE05BC(__this, L_4, NULL);
 		V_0 = L_5;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_008e:
+IL_0092:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_6 = ___1_data;
 		uint32_t L_7;
 		L_7 = RemoteUnityScene_MSG_SetWorldTransform_mB88C2A3E60E4DC78B1C994B1461457C40EF30AD6(__this, L_6, NULL);
 		V_0 = L_7;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_009b:
+IL_009f:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_8 = ___1_data;
 		uint32_t L_9;
 		L_9 = RemoteUnityScene_MSG_SetLocalTransform_mB14940BBF11FD8446A75279BC9A35BB2EC2C4A2A(__this, L_8, NULL);
 		V_0 = L_9;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00a8:
+IL_00ac:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_10 = ___1_data;
 		uint32_t L_11;
 		L_11 = RemoteUnityScene_MSG_SetColor_mB5960EF9A4FBDF13E5AF3D1839C993B2E0D4D68D(__this, L_10, NULL);
 		V_0 = L_11;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00b5:
+IL_00b9:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_12 = ___1_data;
 		uint32_t L_13;
 		L_13 = RemoteUnityScene_MSG_SetTexture_mA49CBA3A7750C88E3FA9B46459B9CBFB7A872C24(__this, L_12, NULL);
 		V_0 = L_13;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00bf:
+IL_00c6:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_14 = ___1_data;
 		uint32_t L_15;
 		L_15 = RemoteUnityScene_MSG_CreateText_mBA36D5C2EC636996A8AB66194A593AB8F76CC5EE(__this, L_14, NULL);
 		V_0 = L_15;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00c9:
+IL_00d0:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_16 = ___1_data;
 		uint32_t L_17;
 		L_17 = RemoteUnityScene_MSG_SetText_m11E7D4B08E9A167CB96CD6AC7C4EEE94F2FA0D1E(__this, L_16, NULL);
 		V_0 = L_17;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00d3:
+IL_00da:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_18 = ___1_data;
 		uint32_t L_19;
 		L_19 = RemoteUnityScene_MSG_Say_m4BB463145A1EDF983D331309E6A2A5D228306155(__this, L_18, NULL);
 		V_0 = L_19;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00dd:
+IL_00e4:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_20 = ___1_data;
 		uint32_t L_21;
 		L_21 = RemoteUnityScene_MSG_Remove_mAC026E9F56C12D093C8601F3DC4FB7CED1902DC1(__this, L_20, NULL);
 		V_0 = L_21;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00e7:
+IL_00ee:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_22 = ___1_data;
 		uint32_t L_23;
 		L_23 = RemoteUnityScene_MSG_RemoveAll_mBB000F4018AF22B514E9E24C7C10E0ADB78D0D57(__this, L_22, NULL);
 		V_0 = L_23;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00f1:
+IL_00f8:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_24 = ___1_data;
 		uint32_t L_25;
 		L_25 = RemoteUnityScene_MSG_BeginDisplayList_m265EFF328D1794CBC8C809703E9A8F5DB1701551(__this, L_24, NULL);
 		V_0 = L_25;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_00fb:
+IL_0102:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_26 = ___1_data;
 		uint32_t L_27;
 		L_27 = RemoteUnityScene_MSG_EndDisplayList_mF0176F1916218BD2AFF8E99A8A88CF19DC9525F6(__this, L_26, NULL);
 		V_0 = L_27;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_0105:
+IL_010c:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_28 = ___1_data;
 		uint32_t L_29;
 		L_29 = RemoteUnityScene_MSG_SetTargetMode_m36E2F819B5E457620F3AA23364FEB34E14AD0CCF(__this, L_28, NULL);
 		V_0 = L_29;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_010f:
+IL_0116:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_30 = ___1_data;
 		uint32_t L_31;
 		L_31 = RemoteUnityScene_MSG_CreateInteractableText_m63A8493BBF62762717B50673EC4247B261C011A5(__this, L_30, NULL);
 		V_0 = L_31;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_0119:
+IL_0120:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_32 = ___1_data;
 		uint32_t L_33;
 		L_33 = RemoteUnityScene_MSG_SetInteractableText_mFB66196CD2FB7F6866283F27CA8C277F7F32E7B2(__this, L_32, NULL);
 		V_0 = L_33;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_0123:
+IL_012a:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_34 = ___1_data;
 		uint32_t L_35;
 		L_35 = RemoteUnityScene_MSG_CreateArrow_m477283C20B193BEFF4EC97437EFC240B82FE469D(__this, L_34, NULL);
 		V_0 = L_35;
-		goto IL_0135;
+		goto IL_0146;
 	}
 
-IL_012d:
+IL_0134:
 	{
 		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_36 = ___1_data;
 		uint32_t L_37;
-		L_37 = RemoteUnityScene_MSG_Disconnect_mCBF03C69B8130AF933710A2E8C48C8EA95ED44D7(__this, L_36, NULL);
+		L_37 = RemoteUnityScene_MSG_ToggleObjectVisibility_m2C017AFBA2DD4202FAC7DDAC5A65D7B08A41CFE6(__this, L_36, NULL);
 		V_0 = L_37;
+		goto IL_0146;
 	}
 
-IL_0135:
+IL_013e:
 	{
-		uint32_t L_38 = V_0;
-		return L_38;
+		ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* L_38 = ___1_data;
+		uint32_t L_39;
+		L_39 = RemoteUnityScene_MSG_Disconnect_mCBF03C69B8130AF933710A2E8C48C8EA95ED44D7(__this, L_38, NULL);
+		V_0 = L_39;
+	}
+
+IL_0146:
+	{
+		uint32_t L_40 = V_0;
+		return L_40;
 	}
 }
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_AddGameObject_m0540E2311F0A23ADD226F6944297F5D0F21B6BFB (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ___0_go, const RuntimeMethod* method) 
@@ -3926,6 +3940,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_CreateArrow_m47
 		uint32_t L_4;
 		L_4 = RemoteUnityScene_AddGameObject_m0540E2311F0A23ADD226F6944297F5D0F21B6BFB(__this, L_3, NULL);
 		return L_4;
+	}
+}
+IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_UpdateArrowTransform_m7008200F8142601DC5CEC8824312C8378D9A08E1 (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) 
+{
+	{
+		return 1;
 	}
 }
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR uint32_t RemoteUnityScene_MSG_SetText_m11E7D4B08E9A167CB96CD6AC7C4EEE94F2FA0D1E (RemoteUnityScene_tCF8ACD75A998B0AC49889089AC72BB571C9BA002* __this, ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ___0_data, const RuntimeMethod* method) 

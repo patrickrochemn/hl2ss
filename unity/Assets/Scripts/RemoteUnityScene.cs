@@ -66,6 +66,8 @@ public class RemoteUnityScene : MonoBehaviour
             case 21: ret = MSG_CreateInteractableText(data); break;
             case 22: ret = MSG_SetInteractableText(data); break;
             case 23: ret = MSG_CreateArrow(data); break;
+            case 24: ret = MSG_ToggleObjectVisibility(data); break;
+            case 25: ret = MSG_UpdateArrowTransform(data); break;
 
             case ~0U: ret = MSG_Disconnect(data); break;
         }
@@ -344,6 +346,23 @@ public class RemoteUnityScene : MonoBehaviour
         return AddGameObject(go);
     }
 
+    uint MSG_UpdateArrowTransform(byte[] data)
+    {
+        if (data.Length < 44) { return 0; }
+
+        GameObject go;
+        int key = GetKey(data);
+        if (!m_remote_objects.TryGetValue(key, out go)) { return 0; }
+
+        Vector3 deltaPosition;
+        Quaternion deltaRotation;
+        Vector3 deltaScale;
+
+        UnpackTransform(data, 4, out deltaPosition, out deltaRotation, out deltaScale);
+
+        return 1;
+    }
+
     // OK
     uint MSG_SetText(byte[] data)
     {
@@ -383,7 +402,7 @@ public class RemoteUnityScene : MonoBehaviour
         return 1;
     }
 
-    uint MSG_ToggleObjectVisibility(byte[] data)
+    uint MSG_ToggleObjectVisibility (byte[] data)
     {
         if (data.Length < 8) { return 0; }
 
