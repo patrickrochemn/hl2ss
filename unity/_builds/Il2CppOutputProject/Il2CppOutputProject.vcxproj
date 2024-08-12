@@ -1025,6 +1025,8 @@
     </ClCompile>
     <ClCompile Include="Source\il2cppOutput\UnityEngine.UnityAnalyticsModule.cpp">
     </ClCompile>
+    <ClCompile Include="Source\il2cppOutput\UnityEngine.UnityWebRequestAudioModule.cpp">
+    </ClCompile>
     <ClCompile Include="Source\il2cppOutput\UnityEngine.UnityWebRequestModule.cpp">
     </ClCompile>
     <ClCompile Include="Source\il2cppOutput\UnityEngine.VFXModule.cpp">
@@ -1208,6 +1210,8 @@
     <ClCompile Include="Source\il2cppOutput\UnityEngine.UI_CodeGen.c">
     </ClCompile>
     <ClCompile Include="Source\il2cppOutput\UnityEngine.UnityAnalyticsModule_CodeGen.c">
+    </ClCompile>
+    <ClCompile Include="Source\il2cppOutput\UnityEngine.UnityWebRequestAudioModule_CodeGen.c">
     </ClCompile>
     <ClCompile Include="Source\il2cppOutput\UnityEngine.UnityWebRequestModule_CodeGen.c">
     </ClCompile>

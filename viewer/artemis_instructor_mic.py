@@ -1,64 +1,45 @@
-import hl2ss
-import hl2ss_lnm
-import pyaudio
+import http.server
+import socketserver
 import wave
-import numpy as np
-from pynput import keyboard
+import os
 
 # Settings --------------------------------------------------------------------
 
-# HoloLens address
-host = "192.168.2.38"
+# Port number for the HTTP server
+PORT = 8080
 
 # Path to the song file
 song_file = "amber's embrace.wav"
 
-# Audio encoding profile
-profile = hl2ss.AudioProfile.RAW
-
 #------------------------------------------------------------------------------
 
-def on_press(key):
-    global enable
-    enable = key != keyboard.Key.esc
-    return enable
+class AudioRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        # Serve the audio file when requested
+        if self.path == '/':
+            print(f"Received request for {song_file}")
+            if os.path.exists(song_file):
+                print(f"Serving {song_file}")
+                self.send_response(200)
+                self.send_header("Content-type", "audio/wav")
+                self.end_headers()
+                with open(song_file, 'rb') as f:
+                    self.wfile.write(f.read())
+            else:
+                print(f"File not found: {song_file}")
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"File not found")
+        else:
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(b"Invalid path")
 
-# Initialize audio stream settings
-audio_format = pyaudio.paInt16
-channels = 2
-sample_rate = 48000
-
-# Initialize the audio client
-client = hl2ss_lnm.tx(host, hl2ss.StreamPort.SPEAKER)
-client.open()
-
-# Initialize PyAudio
-p = pyaudio.PyAudio()
-
-# Open the song file
-wf = wave.open(song_file, 'rb')
-
-# Check if the song file format matches the expected format
-assert wf.getnchannels() == channels
-assert wf.getframerate() == sample_rate
-assert wf.getsampwidth() == p.get_sample_size(audio_format)
-
-# Read the audio data
-frames = wf.readframes(wf.getnframes())
-audio_data = np.frombuffer(frames, dtype=np.int16).astype(np.float32)
-
-# Send the audio data to the HoloLens
-enable = True
-listener = keyboard.Listener(on_press=on_press)
-listener.start()
-
-while enable and len(audio_data) > 0:
-    packet_size = 1024
-    chunk = audio_data[:packet_size]
-    client.send(chunk.tobytes())
-    audio_data = audio_data[packet_size:]
-
-# Cleanup
-client.close()
-listener.join()
-p.terminate()
+# Set up the server
+with socketserver.TCPServer(("", PORT), AudioRequestHandler) as httpd:
+    print(f"Serving audio on port {PORT}...")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("Server stopped.")
+        httpd.shutdown()

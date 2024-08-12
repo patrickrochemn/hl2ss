@@ -12,6 +12,16 @@
 
 
 
+extern void AudioStreamReceiver_Start_m6B9DBB8E42CB0BC70182B1E896C0040ECFA14626 (void);
+extern void AudioStreamReceiver_StreamAudio_m68653FB86C3F295BA7B35AFA6E6AD9B62B00F4A9 (void);
+extern void AudioStreamReceiver_PlayReceivedAudio_mE38149B26829AC06E1F74C89364E16415DB8B7A3 (void);
+extern void AudioStreamReceiver__ctor_mCBB7D82605A2C0D2A1E19EC059DC1408C00633FC (void);
+extern void U3CStreamAudioU3Ed__3__ctor_mC5A2037520BCDB07207D095E7803D184FBAF69BC (void);
+extern void U3CStreamAudioU3Ed__3_System_IDisposable_Dispose_m53F9534A235D9362567B4043590EFDB971810541 (void);
+extern void U3CStreamAudioU3Ed__3_MoveNext_m845019E7A710089C7173D5AB1C0562B94B70BA59 (void);
+extern void U3CStreamAudioU3Ed__3_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m12EE56CF3CB86F9056D647F7DF313246C083AA98 (void);
+extern void U3CStreamAudioU3Ed__3_System_Collections_IEnumerator_Reset_m8FBE92D6DC880FF0AE4DAFBD70BABA0214D052D5 (void);
+extern void U3CStreamAudioU3Ed__3_System_Collections_IEnumerator_get_Current_m5B4148C92FEB8C9CD3BC533AC8AB4AFFADF062DB (void);
 extern void hl2ss_InitializeStreamsOnUI_mBA35493A4FFB4B973F856ED4DB33DC0BA8E65709 (void);
 extern void hl2ss_DebugMessage_m71B83F2846E00B127AED5F9841209023F1602D4B (void);
 extern void hl2ss_MQ_SO_Push_m2DADC91331C20C2495114362D306E89F29BEF408 (void);
@@ -74,8 +84,18 @@ extern void TransformController_OnManipulationEnded_m24E4A903AF2E3CE6A84B66ED6A4
 extern void TransformController__ctor_m0EA639018CAE537569D3ECF78164935ECBBA5136 (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033 (void);
 extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1 (void);
-static Il2CppMethodPointer s_methodPointers[62] = 
+static Il2CppMethodPointer s_methodPointers[72] = 
 {
+	AudioStreamReceiver_Start_m6B9DBB8E42CB0BC70182B1E896C0040ECFA14626,
+	AudioStreamReceiver_StreamAudio_m68653FB86C3F295BA7B35AFA6E6AD9B62B00F4A9,
+	AudioStreamReceiver_PlayReceivedAudio_mE38149B26829AC06E1F74C89364E16415DB8B7A3,
+	AudioStreamReceiver__ctor_mCBB7D82605A2C0D2A1E19EC059DC1408C00633FC,
+	U3CStreamAudioU3Ed__3__ctor_mC5A2037520BCDB07207D095E7803D184FBAF69BC,
+	U3CStreamAudioU3Ed__3_System_IDisposable_Dispose_m53F9534A235D9362567B4043590EFDB971810541,
+	U3CStreamAudioU3Ed__3_MoveNext_m845019E7A710089C7173D5AB1C0562B94B70BA59,
+	U3CStreamAudioU3Ed__3_System_Collections_Generic_IEnumeratorU3CSystem_ObjectU3E_get_Current_m12EE56CF3CB86F9056D647F7DF313246C083AA98,
+	U3CStreamAudioU3Ed__3_System_Collections_IEnumerator_Reset_m8FBE92D6DC880FF0AE4DAFBD70BABA0214D052D5,
+	U3CStreamAudioU3Ed__3_System_Collections_IEnumerator_get_Current_m5B4148C92FEB8C9CD3BC533AC8AB4AFFADF062DB,
 	hl2ss_InitializeStreamsOnUI_mBA35493A4FFB4B973F856ED4DB33DC0BA8E65709,
 	hl2ss_DebugMessage_m71B83F2846E00B127AED5F9841209023F1602D4B,
 	hl2ss_MQ_SO_Push_m2DADC91331C20C2495114362D306E89F29BEF408,
@@ -139,8 +159,18 @@ static Il2CppMethodPointer s_methodPointers[62] =
 	UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mBEB95BEB954BB63E9710BBC7AD5E78C4CB0A0033,
 	UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mE70FB23ACC1EA12ABC948AA22C2E78B2D0AA39B1,
 };
-static const int32_t s_InvokerIndices[62] = 
+static const int32_t s_InvokerIndices[72] = 
 {
+	7858,
+	7709,
+	7858,
+	7858,
+	6220,
+	7858,
+	7563,
+	7709,
+	7858,
+	7709,
 	11235,
 	11223,
 	11235,
@@ -208,7 +238,7 @@ IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	62,
+	72,
 	s_methodPointers,
 	0,
 	NULL,

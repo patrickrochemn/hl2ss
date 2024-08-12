@@ -18,7 +18,7 @@ public class AudioStreamReceiver : MonoBehaviour
     IEnumerator StreamAudio()
     {
         // Adjust the URL to match audio stream source
-        string url = "http://server.address/stream";
+        string url = "http://192.168.1.23:8080";
 
         UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.WAV);
         yield return www.SendWebRequest();
