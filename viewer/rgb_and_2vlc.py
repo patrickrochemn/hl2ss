@@ -2,7 +2,6 @@ import threading
 import cv2
 import hl2ss
 import hl2ss_lnm
-import numpy as np
 
 # Settings
 host = "192.168.2.38"
@@ -25,7 +24,7 @@ frames = {'vlc_left': None, 'vlc_right': None, 'rgb': None}
 # Lock for thread-safe access to frames
 frame_lock = threading.Lock()
 
-def stream_vlc_camera(port, name):
+def stream_vlc_camera(port, name, window_name):
     client = hl2ss_lnm.rx_rm_vlc(host, port, vlc_mode)
     client.open()
     while True:
@@ -34,10 +33,19 @@ def stream_vlc_camera(port, name):
             frame = data.payload
             with frame_lock:
                 frames[name] = frame
+
+            # Ensure VLC frames have 3 dimensions
+            if len(frame.shape) == 2:
+                frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+
+            cv2.imshow(window_name, frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
         except Exception as e:
             print(f"Error in {name}: {e}")
             break
     client.close()
+    cv2.destroyAllWindows()
 
 def stream_rgb_camera():
     hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
@@ -49,47 +57,27 @@ def stream_rgb_camera():
             frame = data.payload.image
             with frame_lock:
                 frames['rgb'] = frame
+
+            cv2.imshow('RGB Camera', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                stop_streaming()
+                break
         except Exception as e:
             print(f"Error in RGB stream: {e}")
             break
     client.close()
     hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
+    cv2.destroyAllWindows()
 
-def display_frames():
-    while True:
-        with frame_lock:
-            vlc_left = frames['vlc_left']
-            vlc_right = frames['vlc_right']
-            rgb = frames['rgb']
-
-        if vlc_left is not None and vlc_right is not None and rgb is not None:
-            # Ensure VLC frames have 3 dimensions
-            if len(vlc_left.shape) == 2:
-                vlc_left = cv2.cvtColor(vlc_left, cv2.COLOR_GRAY2BGR)
-            if len(vlc_right.shape) == 2:
-                vlc_right = cv2.cvtColor(vlc_right, cv2.COLOR_GRAY2BGR)
-
-            # Resize frames to fit in a 2x2 grid
-            vlc_left_resized = cv2.resize(vlc_left, (width // 2, height // 2))
-            vlc_right_resized = cv2.resize(vlc_right, (width // 2, height // 2))
-            rgb_resized = cv2.resize(rgb, (width, height // 2))
-
-            # Combine frames
-            top_row = rgb_resized
-            bottom_row = np.hstack((vlc_left_resized, vlc_right_resized))
-            combined_frame = np.vstack((top_row, bottom_row))
-
-            cv2.imshow('Combined Video Feed', combined_frame)
-            # Press 'q' to quit
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
+def stop_streaming():
+    global running
+    running = False
     cv2.destroyAllWindows()
 
 # Start threads for VLC and RGB cameras
 threads = []
 for i, port in enumerate(vlc_ports):
-    t = threading.Thread(target=stream_vlc_camera, args=(port, f'vlc_{["left", "right"][i]}'))
+    t = threading.Thread(target=stream_vlc_camera, args=(port, f'vlc_{["left", "right"][i]}', f'VLC {["Left", "Right"][i]} Camera'))
     t.start()
     threads.append(t)
 
@@ -97,11 +85,6 @@ rgb_thread = threading.Thread(target=stream_rgb_camera)
 rgb_thread.start()
 threads.append(rgb_thread)
 
-# Start the display thread
-display_thread = threading.Thread(target=display_frames)
-display_thread.start()
-
 # Wait for all threads to finish
 for t in threads:
     t.join()
-display_thread.join()
