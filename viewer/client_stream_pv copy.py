@@ -1,13 +1,3 @@
-#------------------------------------------------------------------------------
-# This script receives video from the HoloLens front RGB camera and plays it.
-# The camera supports various resolutions and framerates. See
-# https://github.com/jdibenes/hl2ss/blob/main/etc/pv_configurations.txt
-# for a list of supported formats. The default configuration is 1080p 30 FPS. 
-# The stream supports three operating modes: 0) video, 1) video + camera pose, 
-# 2) query calibration (single transfer).
-# Press esc to stop.
-#------------------------------------------------------------------------------
-
 from pynput import keyboard
 
 import cv2
@@ -18,7 +8,7 @@ import hl2ss_lnm
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = "192.168.1.38"
+host = "192.168.2.38"
 
 # Operating mode
 # 0: video
@@ -27,7 +17,7 @@ host = "192.168.1.38"
 mode = hl2ss.StreamMode.MODE_0
 
 # Enable Mixed Reality Capture (Holograms)
-enable_mrc = False
+enable_mrc = True
 
 # Enable Shared Capture
 # If another program is already using the PV camera, you can still stream it by
@@ -44,8 +34,9 @@ framerate = 30
 # Effective FPS is framerate / divisor
 divisor = 1 
 
-# Video encoding profile
+# Video encoding profile and bitrate (None = default)
 profile = hl2ss.VideoProfile.H265_MAIN
+bitrate = None
 
 # Decoded format
 # Options include:
@@ -58,11 +49,10 @@ decoded_format = 'bgr24'
 
 #------------------------------------------------------------------------------
 
-hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO_2, enable_mrc=enable_mrc, shared=shared)
+hl2ss_lnm.start_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, enable_mrc=enable_mrc, shared=shared)
 
 if (mode == hl2ss.StreamMode.MODE_2):
     data = hl2ss_lnm.download_calibration_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, width, height, framerate)
-
 else:
     enable = True
 
@@ -74,7 +64,7 @@ else:
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
 
-    client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO_2, mode=mode, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, decoded_format=decoded_format)
+    client = hl2ss_lnm.rx_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=mode, width=width, height=height, framerate=framerate, divisor=divisor, profile=profile, bitrate=bitrate, decoded_format=decoded_format)
     client.open()
 
     while (enable):
@@ -86,4 +76,4 @@ else:
     client.close()
     listener.join()
 
-hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO_2)
+hl2ss_lnm.stop_subsystem_pv(host, hl2ss.StreamPort.PERSONAL_VIDEO)
