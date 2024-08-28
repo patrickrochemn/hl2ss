@@ -1,11 +1,12 @@
+import vosk
 import sounddevice as sd
 import queue
-import vosk
 import json
 import sys
 
 # Set up the Vosk model
-model = vosk.Model("vosk-model-small-en-us-0.15")
+model_path = "vosk-model-small-en-us-0.15"
+model = vosk.Model(model_path)
 
 # Queue to hold the audio data
 q = queue.Queue()
@@ -25,16 +26,22 @@ with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype='int16',
     try:
         while True:
             data = q.get()
+
             if rec.AcceptWaveform(data):
                 result = rec.Result()
                 text = json.loads(result)["text"]
-                print("You said:", text)
+                # Print the recognized text on the same line
+                sys.stdout.write("\rYou said: " + text)
+                sys.stdout.flush()
             else:
                 partial_result = rec.PartialResult()
                 partial_text = json.loads(partial_result)["partial"]
-                print("Partial:", partial_text)
+                # Print the partial result on the same line
+                sys.stdout.write("\rPartial: " + partial_text)
+                sys.stdout.flush()
 
     except KeyboardInterrupt:
-        print("Program interrupted manually.")
+        print("\nProgram interrupted manually.")
+
     finally:
-        print("Program terminated.")
+        print("\nProgram terminated.")
