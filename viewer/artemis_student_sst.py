@@ -4,80 +4,113 @@ import hl2ss_utilities
 import pyaudio
 import queue
 import threading
-import speech_recognition as sr
+import vosk
+import json
+import sys
 import numpy as np
 
-# Settings --------------------------------------------------------------------
-
-# HoloLens address
+# Settings
 host = "192.168.2.38"
-
-# Audio encoding profile
 profile = hl2ss.AudioProfile.AAC_24000
 
-#------------------------------------------------------------------------------
+# Audio format
+audio_format = pyaudio.paFloat32  # Use paInt16 for RAW profile
+channels = hl2ss.Parameters_MICROPHONE.CHANNELS
+sample_rate = hl2ss.Parameters_MICROPHONE.SAMPLE_RATE
 
-# AAC decoded format is f32 planar
-audio_format = pyaudio.paFloat32
+# Set up the Vosk model for STT
+model_path = "viewer/vosk-model-small-en-us-0.15"
+model = vosk.Model(model_path)
 
-# Audio queue for processing
-pcmqueue = queue.Queue()
+# Queues for audio data
+audio_queue = queue.Queue()
+stt_queue = queue.Queue()
 
-# Flag to control the script
-enable = True
+# Buffer for accumulating audio data for STT
+stt_buffer = b''
 
-def pcmworker(pcmqueue):
-    global enable
+# Function to play audio data
+def audio_player():
     p = pyaudio.PyAudio()
-    stream = p.open(format=audio_format, channels=hl2ss.Parameters_MICROPHONE.CHANNELS, rate=hl2ss.Parameters_MICROPHONE.SAMPLE_RATE, output=True)
-    stream.start_stream()
-    while enable:
-        data = pcmqueue.get()
-        stream.write(data)
+    stream = p.open(format=audio_format, channels=channels, rate=sample_rate, output=True)
+    
+    while True:
+        audio_data = audio_queue.get()
+        if audio_data is None:
+            break
+        stream.write(audio_data)
+    
     stream.stop_stream()
     stream.close()
     p.terminate()
 
+# Function to process STT
 def stt_worker():
-    global enable
-    recognizer = sr.Recognizer()
+    global stt_buffer
+    rec = vosk.KaldiRecognizer(model, sample_rate)
+    print("Live STT is running...")
 
-    while enable:
-        if not pcmqueue.empty():
-            audio_data = pcmqueue.get()
-            # Convert float32 to int16 for STT processing
-            audio_data = np.frombuffer(audio_data, dtype=np.float32)
-            audio_data = (audio_data * 32767).astype(np.int16)  # Convert float32 to int16
-            # Create AudioData for STT
-            audio = sr.AudioData(audio_data.tobytes(), hl2ss.Parameters_MICROPHONE.SAMPLE_RATE, 2)
-            try:
-                # Recognize the speech using Google Web Speech API
-                text = recognizer.recognize_google(audio)
-                print(f"STT Output: {text}")
-            except sr.UnknownValueError:
-                print("Google Speech Recognition could not understand the audio")
-            except sr.RequestError as e:
-                print(f"Could not request results from Google Speech Recognition service; {e}")
+    while True:
+        data = stt_queue.get()
+        if data is None:
+            break
 
-# Start threads
-pcm_thread = threading.Thread(target=pcmworker, args=(pcmqueue,))
+        # Convert float32 audio data to int16, as Vosk expects int16
+        audio_int16 = np.frombuffer(data, dtype=np.float32).astype(np.int16).tobytes()
+
+        # Accumulate audio data in the buffer
+        stt_buffer += audio_int16
+
+        # Process STT when the buffer is large enough
+        if len(stt_buffer) >= sample_rate * 2 * 5:  # Roughly 5 seconds of audio
+            if rec.AcceptWaveform(stt_buffer):
+                result = rec.Result()
+                text = json.loads(result)["text"]
+                sys.stdout.write("\rYou said: " + text + "\n")
+                sys.stdout.flush()
+                stt_buffer = b''  # Clear the buffer after processing
+            else:
+                partial_result = rec.PartialResult()
+                partial_text = json.loads(partial_result)["partial"]
+                sys.stdout.write("\rPartial: " + partial_text)
+                sys.stdout.flush()
+
+# Function to capture audio from HoloLens microphone
+def capture_audio():
+    client = hl2ss_lnm.rx_microphone(host, hl2ss.StreamPort.MICROPHONE, profile=profile)
+    client.open()
+    print("Capturing audio from HoloLens microphone...")
+
+    try:
+        while True:
+            data = client.get_next_packet()
+            audio = hl2ss_utilities.microphone_planar_to_packed(data.payload)
+            audio_bytes = audio.tobytes()
+
+            # Debug: Print the size of the audio data being captured
+            # print(f"Captured {len(audio_bytes)} bytes of audio data from microphone.")
+
+            # Send audio to both player and STT worker
+            audio_queue.put(audio_bytes)
+            stt_queue.put(audio_bytes)
+
+    except KeyboardInterrupt:
+        print("\nAudio capture interrupted manually.")
+    finally:
+        client.close()
+        audio_queue.put(None)
+        stt_queue.put(None)
+
+# Start threads for audio capture, playback, and STT
+audio_thread = threading.Thread(target=capture_audio)
+player_thread = threading.Thread(target=audio_player)
 stt_thread = threading.Thread(target=stt_worker)
-pcm_thread.start()
+
+audio_thread.start()
+player_thread.start()
 stt_thread.start()
 
-# Initialize the audio client
-client = hl2ss_lnm.rx_microphone(host, hl2ss.StreamPort.MICROPHONE, profile=profile)
-client.open()
-
-# Main loop to receive audio data
-while enable:
-    data = client.get_next_packet()
-    audio = hl2ss_utilities.microphone_planar_to_packed(data.payload)  # Convert planar to packed
-    pcmqueue.put(audio.tobytes())
-
-client.close()
-
-enable = False
-pcmqueue.put(b'')
-pcm_thread.join()
+# Wait for threads to finish
+audio_thread.join()
+player_thread.join()
 stt_thread.join()
