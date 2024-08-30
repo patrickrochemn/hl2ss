@@ -1,6 +1,5 @@
 import hl2ss
 import hl2ss_lnm
-import hl2ss_utilities
 import pyaudio
 import queue
 import threading
@@ -11,10 +10,10 @@ import numpy as np
 
 # Settings
 host = "192.168.2.38"
-profile = hl2ss.AudioProfile.AAC_24000
+profile = hl2ss.AudioProfile.RAW  # Use RAW profile
 
 # Audio format
-audio_format = pyaudio.paFloat32  # Use paInt16 for RAW profile
+audio_format = pyaudio.paInt16  # Use paInt16 for RAW profile
 channels = hl2ss.Parameters_MICROPHONE.CHANNELS
 sample_rate = hl2ss.Parameters_MICROPHONE.SAMPLE_RATE
 
@@ -55,14 +54,11 @@ def stt_worker():
         if data is None:
             break
 
-        # Convert float32 audio data to int16, as Vosk expects int16
-        audio_int16 = np.frombuffer(data, dtype=np.float32).astype(np.int16).tobytes()
-
         # Accumulate audio data in the buffer
-        stt_buffer += audio_int16
+        stt_buffer += data
 
-        # Process STT when the buffer is large enough
-        if len(stt_buffer) >= sample_rate * 2 * 5:  # Roughly 5 seconds of audio
+        # Process STT when the buffer contains 20 packets (200ms of audio)
+        if len(stt_buffer) >= sample_rate * 2 * channels * 0.2:
             if rec.AcceptWaveform(stt_buffer):
                 result = rec.Result()
                 text = json.loads(result)["text"]
@@ -84,11 +80,7 @@ def capture_audio():
     try:
         while True:
             data = client.get_next_packet()
-            audio = hl2ss_utilities.microphone_planar_to_packed(data.payload)
-            audio_bytes = audio.tobytes()
-
-            # Debug: Print the size of the audio data being captured
-            # print(f"Captured {len(audio_bytes)} bytes of audio data from microphone.")
+            audio_bytes = data.payload.tobytes()
 
             # Send audio to both player and STT worker
             audio_queue.put(audio_bytes)

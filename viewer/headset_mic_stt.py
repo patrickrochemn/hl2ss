@@ -5,7 +5,7 @@ import json
 import sys
 
 # Set up the Vosk model
-model_path = "vosk-model-small-en-us-0.15"
+model_path = "viewer/vosk-model-small-en-us-0.15"
 model = vosk.Model(model_path)
 
 # Queue to hold the audio data
